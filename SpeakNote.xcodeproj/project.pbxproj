@@ -44,6 +44,7 @@
 		DBD6FE4A1BC0980B00D77809 /* AcousticModelSpanish.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = AcousticModelSpanish.bundle; sourceTree = "<group>"; };
 		DBD6FE4B1BC0980B00D77809 /* OpenEars.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = OpenEars.framework; sourceTree = "<group>"; };
 		DBD6FE4C1BC0980B00D77809 /* Slt.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Slt.framework; sourceTree = "<group>"; };
+		DBD6FE511BC09C0300D77809 /* SpeakNote-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SpeakNote-Bridging-Header.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				DBD6FE271BC06B8400D77809 /* Info.plist */,
+				DBD6FE511BC09C0300D77809 /* SpeakNote-Bridging-Header.h */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -373,6 +375,7 @@
 				INFOPLIST_FILE = SpeakNote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SpeakNote/SpeakNote-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
@@ -388,6 +391,7 @@
 				INFOPLIST_FILE = SpeakNote/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "SpeakNote/SpeakNote-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
@@ -445,6 +449,7 @@
 				DBD6FE441BC06B8400D77809 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DBD6FE451BC06B8400D77809 /* Build configuration list for PBXNativeTarget "SpeakNoteTests" */ = {
 			isa = XCConfigurationList;
@@ -453,6 +458,7 @@
 				DBD6FE471BC06B8400D77809 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
