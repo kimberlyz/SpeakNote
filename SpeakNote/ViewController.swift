@@ -12,11 +12,15 @@ import UIKit
 
 class ViewController: UIViewController, OEEventsObserverDelegate {
     
+    @IBOutlet weak var recordButton: UIButton!
+    
     var openEarsEventsObserver = OEEventsObserver()
+    var buttonFlashing = false
 
 // START HERE
     override func viewDidLoad() {
         super.viewDidLoad()
+    
         
         self.openEarsEventsObserver = OEEventsObserver()
         self.openEarsEventsObserver.delegate = self
@@ -45,6 +49,44 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         OEPocketsphinxController.sharedInstance().startListeningWithLanguageModelAtPath(lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.pathToModel("AcousticModelEnglish"), languageModelIsJSGF: false) // Change "AcousticModelEnglish" to "AcousticModelSpanish" to perform Spanish recognition instead of English.
         
     }
+    
+    @IBAction func record(sender: AnyObject) {
+        
+        if !buttonFlashing {
+            startFlashingbutton()
+            //startListening()
+        } else {
+            stopFlashingbutton()
+            //stopListening()
+        }
+    }
+    
+    func startFlashingbutton() {
+        
+        buttonFlashing = true
+        recordButton.alpha = 1
+        
+        UIView.animateWithDuration(0.5 , delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.Repeat | UIViewAnimationOptions.Autoreverse | UIViewAnimationOptions.AllowUserInteraction, animations: {
+            
+            self.recordButton.alpha = 0.1
+            
+            }, completion: {Bool in
+        })
+    }
+    
+    func stopFlashingbutton() {
+        
+        buttonFlashing = false
+        
+        UIView.animateWithDuration(0.1, delay: 0.0, options: UIViewAnimationOptions.CurveEaseInOut | UIViewAnimationOptions.BeginFromCurrentState, animations: {
+            
+            self.recordButton.alpha = 1
+            
+            }, completion: {Bool in
+        })
+    }
+    
+    
     
     func pocketsphinxDidReceiveHypothesis(hypothesis: String!, recognitionScore: String!, utteranceID: String!) {
         println("The received hypothesis is %@ with a score of %@ and an ID of %@", hypothesis, recognitionScore, utteranceID)
@@ -123,6 +165,8 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
+    
 
 
 }
