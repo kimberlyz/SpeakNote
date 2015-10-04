@@ -8,35 +8,36 @@
 
 import UIKit
 
-
-
 class ViewController: UIViewController, OEEventsObserverDelegate {
     
-    @IBOutlet weak var recordButton: UIButton!
+    var lmPath: String!
+    var dicPath: String!
+    var words: Array<String> = []
+    var currentWord: String!
     
     var openEarsEventsObserver = OEEventsObserver()
+    var startupFailedDueToLackOfPermissions = Bool()
+    
     var buttonFlashing = false
+    
+    @IBOutlet weak var recordButton: UIButton!
 
 // START HERE
     override func viewDidLoad() {
         super.viewDidLoad()
+        loadOpenEars()
+    }
     
+    func loadOpenEars() {
         
         self.openEarsEventsObserver = OEEventsObserver()
         self.openEarsEventsObserver.delegate = self
         
+        var lmGenerator: OELanguageModelGenerator = OELanguageModelGenerator()
         
-        var words: Array<String> = ["HI", "HELLO", "DOES THIS WORK", "SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY","FRIDAY", "SATURDAY"]
-        
-        
-        let lmGenerator: OELanguageModelGenerator = OELanguageModelGenerator()
-        //let name = "LanguageModelFileStarSaver"
-        
+        addWords()
         let name = "LanguageModelFileStarSaver"
-        let err = lmGenerator.generateLanguageModelFromArray(words, withFilesNamed: name, forAcousticModelAtPath: OEAcousticModel.pathToModel("AcousticModelEnglish"))  // Change "AcousticModelEnglish" to "AcousticModelSpanish" to create a Spanish language model instead of an English one.
-        
-        var lmPath: String!
-        var dicPath: String!
+        let err = lmGenerator.generateLanguageModelFromArray(words, withFilesNamed: name, forAcousticModelAtPath: OEAcousticModel.pathToModel("AcousticModelEnglish")) // Change "AcousticModelEnglish" to "AcousticModelSpanish" to create a Spanish language model instead of an English one.
         
         if err == nil {
             lmPath = lmGenerator.pathToSuccessfullyGeneratedLanguageModelWithRequestedName(name)
@@ -44,20 +45,16 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         } else {
             print("Error: %@", err)
         }
-        
-        OEPocketsphinxController.sharedInstance().setActive(true, error: nil)
-        OEPocketsphinxController.sharedInstance().startListeningWithLanguageModelAtPath(lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.pathToModel("AcousticModelEnglish"), languageModelIsJSGF: false) // Change "AcousticModelEnglish" to "AcousticModelSpanish" to perform Spanish recognition instead of English.
-        
     }
     
     @IBAction func record(sender: AnyObject) {
         
         if !buttonFlashing {
             startFlashingbutton()
-            //startListening()
+            startListening()
         } else {
             stopFlashingbutton()
-            //stopListening()
+            stopListening()
         }
     }
     
@@ -128,14 +125,34 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         println("Listening teardown wasn't successful and returned the failure reason: \(reasonForFailure)")
     }
     
+    func pocketsphinxFailedNoMicPermissions() {
+        
+        NSLog("Local callback: The user has never set mic permissions or denied permission to this app's mic, so listening will not start.")
+        self.startupFailedDueToLackOfPermissions = true
+        if OEPocketsphinxController.sharedInstance().isListening {
+            var error = OEPocketsphinxController.sharedInstance().stopListening() // Stop listening if we are listening.
+            if(error != nil) {
+                NSLog("Error while stopping listening in micPermissionCheckCompleted: %@", error);
+            }
+        }
+    }
     
     func testRecognitionCompleted() {
         println("A test file that was submitted for recognition is now complete.")
     }
+    
+    func startListening() {
+        OEPocketsphinxController.sharedInstance().setActive(true, error: nil)
+        OEPocketsphinxController.sharedInstance().startListeningWithLanguageModelAtPath(lmPath, dictionaryAtPath: dicPath, acousticModelAtPath: OEAcousticModel.pathToModel("AcousticModelEnglish"), languageModelIsJSGF: false) // Change "AcousticModelEnglish" to "AcousticModelSpanish" to perform Spanish recognition instead of English.
+    }
+    
+    func stopListening() {
+        OEPocketsphinxController.sharedInstance().stopListening()
+    }
+
+
 
     
-    
-        /*
     func addWords() {
         //add any thing here that you want to be recognized. Must be in capital letters
         words.append("SUNDAY")
@@ -159,7 +176,7 @@ class ViewController: UIViewController, OEEventsObserverDelegate {
         words.append("NOVEMBER")
         words.append("DECEMBER")
         words.append("HI")
-    } */
+    }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
